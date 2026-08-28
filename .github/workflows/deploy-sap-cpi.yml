@@ -2,6 +2,16 @@ name: Deploy SAP Cloud Integration flow
 
 on:
   workflow_dispatch:
+    inputs:
+      operation:
+        description: "How should CPI handle the flow?"
+        required: true
+        default: update
+        type: choice
+        options:
+          - update
+          - upload
+          - deploy-only
   push:
     paths:
       - "config/SAP_SMOKE_TEST.yaml"
@@ -17,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CPI_SERVICE_KEY_JSON: ${{ secrets.CPI_SERVICE_KEY_JSON }}
-      CPI_DEPLOY_OPERATION: update
+      CPI_DEPLOY_OPERATION: ${{ inputs.operation || 'update' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -49,6 +59,7 @@ jobs:
         run: cpi --key-file CPI-API-KEY.json flow upload --manifest config/SAP_SMOKE_TEST.yaml --bundle build/SAP_SMOKE_TEST_FLOW.zip --apply
 
       - name: Save version
+        if: env.CPI_DEPLOY_OPERATION != 'deploy-only'
         run: cpi --key-file CPI-API-KEY.json flow version --manifest config/SAP_SMOKE_TEST.yaml --apply
 
       - name: Deploy flow

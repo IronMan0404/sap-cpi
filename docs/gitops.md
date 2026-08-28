@@ -42,7 +42,11 @@ Use `flow upload` instead of `flow update` when the artifact ID does not yet exi
 
 ## GitHub Actions
 
-The workflow at `.github/workflows/deploy-sap-cpi.yml` runs on demand or when the flow source/configuration changes. It defaults to `CPI_DEPLOY_OPERATION=update` for the existing artifact. Set the workflow environment to `upload` only for a new artifact ID.
+The workflow at `.github/workflows/deploy-sap-cpi.yml` runs on demand or when the flow source/configuration changes. Pushes default to `update` for the existing artifact. Manual runs offer three operations:
+
+- `update`: replace the existing draft, save a version, and deploy. The CPI editor lock must be released.
+- `upload`: create a new artifact ID, save a version, and deploy.
+- `deploy-only`: deploy the existing active version without changing its draft. Use this when the artifact is locked or when no local content change is intended.
 
 Create a GitHub Actions secret named `CPI_SERVICE_KEY_JSON` containing the complete API-client service-key JSON. Never commit the key, print it, or put it in logs. The workflow writes it only to a temporary runner file and removes that file at the end.
 
