@@ -1,4 +1,5 @@
 name: Deploy SAP Cloud Integration flow
+run-name: Deploy SAP Cloud Integration flow - ${{ inputs.operation || 'update' }}
 
 on:
   workflow_dispatch:
