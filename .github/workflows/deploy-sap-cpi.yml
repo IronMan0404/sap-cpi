@@ -38,7 +38,7 @@ jobs:
         run: cpi --key-file CPI-API-KEY.json login
 
       - name: Build flow bundle
-        run: cpi flow build --manifest config/SAP_SMOKE_TEST.yaml --output build/SAP_SMOKE_TEST_FLOW.zip
+        run: cpi --key-file CPI-API-KEY.json flow build --manifest config/SAP_SMOKE_TEST.yaml --output build/SAP_SMOKE_TEST_FLOW.zip
 
       - name: Update existing flow draft
         if: env.CPI_DEPLOY_OPERATION == 'update'
