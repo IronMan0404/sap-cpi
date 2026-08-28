@@ -2,6 +2,8 @@
 
 Python proof of concept for connecting to SAP Cloud Integration on SAP BTP, validating OAuth access, and inventorying integration content.
 
+Architecture and trust boundaries: [docs/architecture.md](docs/architecture.md)
+
 ## Security
 
 The local `DEMO-API-KEY.json` file is intentionally ignored by Git. Never commit, paste, or log its `clientsecret`. If the key is exposed, revoke and recreate it in SAP BTP.
