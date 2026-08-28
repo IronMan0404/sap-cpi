@@ -3,6 +3,7 @@
 import argparse
 import hashlib
 import json
+import re
 import sys
 import tempfile
 import time
@@ -32,6 +33,8 @@ def _bundle_digest(path: str | Path) -> str:
             content = bundle.read(name)
             if name.endswith((".iflw", ".groovy", ".prop", ".propdef", ".project", ".MF")):
                 content = content.replace(b"\r\n", b"\n")
+            if name == "META-INF/MANIFEST.MF":
+                content = re.sub(rb"(?m)^Bundle-Version: .*\n", b"Bundle-Version: <CPI_VERSION>\n", content)
             digest.update(content)
             digest.update(b"\0")
     return digest.hexdigest()

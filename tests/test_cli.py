@@ -57,3 +57,12 @@ def test_bundle_digest_ignores_text_line_endings(tmp_path):
     with zipfile.ZipFile(second, "w") as archive:
         archive.writestr("META-INF/MANIFEST.MF", b"line-one\nline-two\n")
     assert _bundle_digest(first) == _bundle_digest(second)
+
+
+def test_bundle_digest_ignores_cpi_manifest_version(tmp_path):
+    first = tmp_path / "first.zip"
+    second = tmp_path / "second.zip"
+    for target, version in ((first, "1.0.0"), (second, "1.0.1")):
+        with zipfile.ZipFile(target, "w") as archive:
+            archive.writestr("META-INF/MANIFEST.MF", f"Manifest-Version: 1.0\nBundle-Version: {version}\n")
+    assert _bundle_digest(first) == _bundle_digest(second)
