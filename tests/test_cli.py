@@ -1,6 +1,7 @@
 from argparse import Namespace
+import zipfile
 
-from sap_cpi.cli import _build_parser, _run
+from sap_cpi.cli import _build_parser, _bundle_digest, _run
 from sap_cpi.config import Settings
 
 
@@ -34,3 +35,15 @@ def test_flow_version_accepts_release_version_override():
         ["flow", "version", "--manifest", "config/SAP_SMOKE_TEST.yaml", "--version", "1.0.1"]
     )
     assert args.version == "1.0.1"
+
+
+def test_bundle_digest_ignores_cpi_generated_metadata(tmp_path):
+    first = tmp_path / "first.zip"
+    second = tmp_path / "second.zip"
+    for target, metadata in ((first, "one"), (second, "two")):
+        with zipfile.ZipFile(target, "w") as archive:
+            archive.writestr("src/main/resources/scenario.iflw", "design")
+            archive.writestr("src/main/resources/script.groovy", "script")
+            archive.writestr("metainfo.prop", metadata)
+            archive.writestr("src/main/resources/parameters.prop", metadata)
+    assert _bundle_digest(first) == _bundle_digest(second)

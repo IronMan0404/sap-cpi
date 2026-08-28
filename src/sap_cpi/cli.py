@@ -20,7 +20,13 @@ from .manifest import load_manifest
 def _bundle_digest(path: str | Path) -> str:
     digest = hashlib.sha256()
     with zipfile.ZipFile(path) as bundle:
-        for name in sorted(item for item in bundle.namelist() if not item.endswith("/")):
+        # CPI regenerates these deployment metadata files when an artifact is
+        # uploaded/downloaded. They are not iFlow design or script content.
+        generated = {"metainfo.prop", "src/main/resources/parameters.prop"}
+        for name in sorted(
+            item for item in bundle.namelist()
+            if not item.endswith("/") and item not in generated
+        ):
             digest.update(name.encode("utf-8"))
             digest.update(b"\0")
             digest.update(bundle.read(name))
