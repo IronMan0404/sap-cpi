@@ -33,8 +33,10 @@ def _bundle_digest(path: str | Path) -> str:
             content = bundle.read(name)
             if name.endswith((".iflw", ".groovy", ".prop", ".propdef", ".project", ".MF")):
                 content = content.replace(b"\r\n", b"\n")
+                content = content.rstrip(b"\n")
             if name == "META-INF/MANIFEST.MF":
                 content = re.sub(rb"(?m)^Bundle-Version: .*\n", b"Bundle-Version: <CPI_VERSION>\n", content)
+                content = re.sub(rb"(?m)^Origin-Bundle-(Name|SymbolicName): .*\n", b"", content)
             digest.update(content)
             digest.update(b"\0")
     return digest.hexdigest()

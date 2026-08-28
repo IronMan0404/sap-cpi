@@ -66,3 +66,13 @@ def test_bundle_digest_ignores_cpi_manifest_version(tmp_path):
         with zipfile.ZipFile(target, "w") as archive:
             archive.writestr("META-INF/MANIFEST.MF", f"Manifest-Version: 1.0\nBundle-Version: {version}\n")
     assert _bundle_digest(first) == _bundle_digest(second)
+
+
+def test_bundle_digest_ignores_cpi_generated_origin_metadata(tmp_path):
+    first = tmp_path / "first.zip"
+    second = tmp_path / "second.zip"
+    with zipfile.ZipFile(first, "w") as archive:
+        archive.writestr("META-INF/MANIFEST.MF", "Bundle-Name: Demo\nOrigin-Bundle-Name: Old\n")
+    with zipfile.ZipFile(second, "w") as archive:
+        archive.writestr("META-INF/MANIFEST.MF", "Bundle-Name: Demo\nOrigin-Bundle-Name: New\n")
+    assert _bundle_digest(first) == _bundle_digest(second)
