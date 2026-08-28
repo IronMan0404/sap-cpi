@@ -47,3 +47,13 @@ def test_bundle_digest_ignores_cpi_generated_metadata(tmp_path):
             archive.writestr("metainfo.prop", metadata)
             archive.writestr("src/main/resources/parameters.prop", metadata)
     assert _bundle_digest(first) == _bundle_digest(second)
+
+
+def test_bundle_digest_ignores_text_line_endings(tmp_path):
+    first = tmp_path / "first.zip"
+    second = tmp_path / "second.zip"
+    with zipfile.ZipFile(first, "w") as archive:
+        archive.writestr("META-INF/MANIFEST.MF", b"line-one\r\nline-two\r\n")
+    with zipfile.ZipFile(second, "w") as archive:
+        archive.writestr("META-INF/MANIFEST.MF", b"line-one\nline-two\n")
+    assert _bundle_digest(first) == _bundle_digest(second)

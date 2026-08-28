@@ -29,7 +29,10 @@ def _bundle_digest(path: str | Path) -> str:
         ):
             digest.update(name.encode("utf-8"))
             digest.update(b"\0")
-            digest.update(bundle.read(name))
+            content = bundle.read(name)
+            if name.endswith((".iflw", ".groovy", ".prop", ".propdef", ".project", ".MF")):
+                content = content.replace(b"\r\n", b"\n")
+            digest.update(content)
             digest.update(b"\0")
     return digest.hexdigest()
 
