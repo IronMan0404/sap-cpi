@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: SAP Smoke Test Flow
-Bundle-SymbolicName: SAP_SMOKE_TEST_FLOW; singleton:=true
+Bundle-Name: SAP Timer Groovy Demo
+Bundle-SymbolicName: SAP_TIMER_GROOVY_DEMO; singleton:=true
 Bundle-Version: 1.0.0
 SAP-BundleType: IntegrationFlow
 SAP-NodeType: IFLMAP
