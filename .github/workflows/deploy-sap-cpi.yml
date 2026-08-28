@@ -9,7 +9,7 @@ on:
         required: true
         default: update
         type: choice
-        options: [update, upload]
+        options: [update, upload, deploy-only]
       version:
         description: "New CPI semantic version"
         required: true

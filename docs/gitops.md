@@ -65,7 +65,7 @@ The workflows are manually triggered release entry points. Manual runs require a
 
 - `update`: replace the existing draft, save a version, and deploy. The CPI editor lock must be released.
 - `upload`: create a new artifact ID, save a version, and deploy.
-- The staged release path versions and verifies content before approval. Redeploying an already saved version remains a separate operational action and should not bypass release approval.
+- `deploy-only`: redeploy an already saved CPI version after approval. It skips upload and version creation, but still requires the `cpi-production` Environment approval and runtime verification.
 
 Create a GitHub Actions secret named `CPI_SERVICE_KEY_JSON` containing the complete API-client service-key JSON. Never commit the key, print it, or put it in logs. The workflow writes it only to a temporary runner file and removes that file at the end.
 
