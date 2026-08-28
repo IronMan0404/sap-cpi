@@ -1,0 +1,18 @@
+package:
+  id: MY_PACKAGE
+  name: My Package
+  version: 1.0.0
+  template: templates/package.zip
+
+flow:
+  id: MY_FLOW
+  name: My Flow
+  version: 1.0.0
+  template: templates/my-flow.zip
+  configuration:
+    endpoint_address: https://example.internal/api
+    timeout: "30"
+
+deployment:
+  poll_seconds: 5
+  timeout_seconds: 300

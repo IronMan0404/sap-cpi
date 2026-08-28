@@ -1,0 +1,31 @@
+# Secrets and local configuration
+DEMO-API-KEY.json
+*.key.json
+CPI-API-KEY.json
+*.secret.json
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+dist/
+build/
+
+# Local tools and screenshots
+.chrome-cdp-profile/
+Screenshot *.png
+.pytest-temp*/
+
+# IDE and OS files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

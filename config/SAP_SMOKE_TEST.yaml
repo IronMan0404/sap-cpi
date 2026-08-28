@@ -1,0 +1,16 @@
+package:
+  # Existing editable package in the tenant.
+  id: poc
+  name: SAP Smoke Test
+  version: 1.0.0
+
+flow:
+  id: SAP_SMOKE_TEST_FLOW
+  name: SAP Smoke Test Flow
+  version: 1.0.0
+  template: ../artifacts/SAP_SMOKE_TEST_FLOW.zip
+  configuration: {}
+
+deployment:
+  poll_seconds: 5
+  timeout_seconds: 300

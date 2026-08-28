@@ -1,0 +1,10 @@
+{
+  "roles": [
+    "AuthGroup_Administrator",
+    "AuthGroup_IntegrationDeveloper",
+    "MonitoringArtifactsDeploy",
+    "MonitoringDataRead",
+    "MessagePayloadsRead"
+  ],
+  "grant-types": ["client_credentials"]
+}

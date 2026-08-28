@@ -1,0 +1,16 @@
+package:
+  id: poc
+  name: POC flow
+  version: 1.0.0
+
+flow:
+  id: test1
+  name: test1
+  version: 1.0.0
+  # Required by the manifest schema; deploy/version do not read the bundle.
+  template: ../artifacts/SAP_SMOKE_TEST_FLOW.zip
+  configuration: {}
+
+deployment:
+  poll_seconds: 5
+  timeout_seconds: 300
