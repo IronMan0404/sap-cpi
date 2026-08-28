@@ -18,7 +18,6 @@ on:
       - "config/SAP_SMOKE_TEST.yaml"
       - "flows/SAP_SMOKE_TEST_FLOW/**"
       - "artifacts/SAP_SMOKE_TEST_FLOW.zip"
-      - "src/**"
 
 permissions:
   contents: read

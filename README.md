@@ -66,6 +66,8 @@ The OData service root is `<service-key-url>/api/v1`. A successful `login` only 
 
 See [scenarios/SAP_SMOKE_TEST/README.md](scenarios/SAP_SMOKE_TEST/README.md) for the four scenario steps, [flows/SAP_SMOKE_TEST_FLOW/README.md](flows/SAP_SMOKE_TEST_FLOW/README.md) for the flow design, [docs/gitops.md](docs/gitops.md) for local/GitHub deployment, `docs/cloud-foundry-setup.md` for setup, `docs/content-delivery.md` for package/flow delivery, and `docs/authentication.md` for CPI authentication.
 
+See [docs/ROADMAP.md](docs/ROADMAP.md) for the SAP-supported Git/GitHub integration roadmap, promotion options, and limitations.
+
 For package and flow creation, upload, versioning, and deployment, see `docs/content-delivery.md` and `config/cpi.example.yaml`.
 
 The CLI-only API credential setup is documented there as well, including `cf service-key CPI-API-CLI CPI-API-CLI-KEY`.
