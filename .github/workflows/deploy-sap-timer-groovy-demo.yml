@@ -5,11 +5,11 @@ on:
   workflow_dispatch:
     inputs:
       operation:
-        description: "Upload a new artifact or update an existing artifact"
+        description: "Update the existing artifact, or upload a new artifact ID"
         required: true
-        default: upload
+        default: update
         type: choice
-        options: [upload, update, deploy-only]
+        options: [update, upload, deploy-only]
       version:
         description: "New CPI semantic version"
         required: true
