@@ -1,0 +1,16 @@
+package:
+  # Existing editable package in the tenant.
+  id: poc
+  name: POC
+  version: 1.0.0
+
+flow:
+  id: SAP_TIMER_GROOVY_DEMO
+  name: SAP Timer Groovy Demo
+  version: 1.0.0
+  template: ../build/SAP_TIMER_GROOVY_DEMO.zip
+  configuration: {}
+
+deployment:
+  poll_seconds: 5
+  timeout_seconds: 300

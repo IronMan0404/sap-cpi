@@ -1,0 +1,63 @@
+name: Deploy SAP Timer Groovy demo
+run-name: Deploy SAP Timer Groovy demo - ${{ inputs.operation || 'upload' }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: "How should CPI handle the flow?"
+        required: true
+        default: upload
+        type: choice
+        options:
+          - upload
+          - deploy-only
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      CPI_SERVICE_KEY_JSON: ${{ secrets.CPI_SERVICE_KEY_JSON }}
+      CPI_DEPLOY_OPERATION: ${{ inputs.operation || 'upload' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install CLI
+        run: python -m pip install .
+
+      - name: Write temporary service key
+        run: python -c "import os; from pathlib import Path; Path('CPI-API-KEY.json').write_text(os.environ['CPI_SERVICE_KEY_JSON'], encoding='utf-8')"
+
+      - name: Validate OAuth and API access
+        run: cpi --key-file CPI-API-KEY.json login
+
+      - name: Build iFlow from checked-in source
+        run: python scripts/build_iflow.py flows/SAP_TIMER_GROOVY_DEMO build/SAP_TIMER_GROOVY_DEMO.zip
+
+      - name: Upload new flow artifact
+        if: env.CPI_DEPLOY_OPERATION == 'upload'
+        run: cpi --key-file CPI-API-KEY.json flow upload --manifest config/SAP_TIMER_GROOVY_DEMO.yaml --bundle build/SAP_TIMER_GROOVY_DEMO.zip --apply
+
+      - name: Save version
+        if: env.CPI_DEPLOY_OPERATION == 'upload'
+        run: cpi --key-file CPI-API-KEY.json flow version --manifest config/SAP_TIMER_GROOVY_DEMO.yaml --apply
+
+      - name: Deploy flow
+        run: cpi --key-file CPI-API-KEY.json flow deploy --manifest config/SAP_TIMER_GROOVY_DEMO.yaml --apply
+
+      - name: Verify runtime status
+        run: cpi --key-file CPI-API-KEY.json flow status --id SAP_TIMER_GROOVY_DEMO
+
+      - name: Remove temporary service key
+        if: always()
+        run: Remove-Item -LiteralPath CPI-API-KEY.json -Force -ErrorAction SilentlyContinue
+        shell: pwsh
