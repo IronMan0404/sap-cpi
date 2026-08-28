@@ -47,6 +47,8 @@ class AuthenticatedTransport:
                 try:
                     payload = response.json()
                     detail = payload.get("error", {}).get("message", {}).get("value", "")
+                    if not detail:
+                        detail = payload.get("error", {}).get("message", "")
                 except (ValueError, AttributeError):
                     detail = ""
             if detail:

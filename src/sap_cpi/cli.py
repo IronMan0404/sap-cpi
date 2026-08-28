@@ -1,9 +1,13 @@
 """Command-line interface for the SAP Cloud Integration client."""
 
 import argparse
+import hashlib
 import json
 import sys
+import tempfile
 import time
+import zipfile
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
@@ -11,6 +15,17 @@ from .client import CPIClient, CPIClientError
 from .bundle import build_flow_bundle
 from .config import ConfigurationError, load_settings
 from .manifest import load_manifest
+
+
+def _bundle_digest(path: str | Path) -> str:
+    digest = hashlib.sha256()
+    with zipfile.ZipFile(path) as bundle:
+        for name in sorted(item for item in bundle.namelist() if not item.endswith("/")):
+            digest.update(name.encode("utf-8"))
+            digest.update(b"\0")
+            digest.update(bundle.read(name))
+            digest.update(b"\0")
+    return digest.hexdigest()
 
 
 def _build_parser() -> argparse.ArgumentParser:
@@ -57,16 +72,24 @@ def _build_parser() -> argparse.ArgumentParser:
     flow_upload.add_argument("--manifest", required=True)
     flow_upload.add_argument("--bundle", default=None)
     flow_upload.add_argument("--apply", action="store_true")
+    flow_upload.add_argument("--version", default=None)
     flow_update = flow_commands.add_parser("update")
     flow_update.add_argument("--manifest", required=True)
     flow_update.add_argument("--bundle", default=None)
     flow_update.add_argument("--apply", action="store_true")
+    flow_update.add_argument("--version", default=None)
     flow_version = flow_commands.add_parser("version")
     flow_version.add_argument("--manifest", required=True)
     flow_version.add_argument("--apply", action="store_true")
+    flow_version.add_argument("--version", default=None)
     flow_deploy = flow_commands.add_parser("deploy")
     flow_deploy.add_argument("--manifest", required=True)
     flow_deploy.add_argument("--apply", action="store_true")
+    flow_deploy.add_argument("--version", default=None)
+    flow_verify = flow_commands.add_parser("verify")
+    flow_verify.add_argument("--manifest", required=True)
+    flow_verify.add_argument("--bundle", required=True)
+    flow_verify.add_argument("--version", default="active")
     flow_status = flow_commands.add_parser("status")
     flow_status.add_argument("--id", required=True)
     flow_status.add_argument("--task-id")
@@ -112,6 +135,8 @@ def _run(args: argparse.Namespace, client: CPIClient) -> Any:
         if args.flow_command == "status":
             return client.runtime_status(args.id) if not args.task_id else client.deployment_status(args.task_id)
         manifest = load_manifest(args.manifest)
+        if getattr(args, "version", None):
+            manifest = replace(manifest, flow=replace(manifest.flow, version=args.version))
         if args.flow_command == "upload":
             bundle = args.bundle or f"build/{manifest.flow.id}.zip"
             if not Path(bundle).is_file():
@@ -130,6 +155,20 @@ def _run(args: argparse.Namespace, client: CPIClient) -> Any:
             if not args.apply:
                 return {"dryRun": True, "operation": "save-flow-version", "artifactId": manifest.flow.id, "version": manifest.flow.version}
             return client.save_flow_version(manifest.flow.id, manifest.flow.version)
+        if args.flow_command == "verify":
+            bundle = Path(args.bundle)
+            if not bundle.is_file():
+                raise ConfigurationError(f"Flow bundle not found: {bundle}")
+            with tempfile.TemporaryDirectory() as directory:
+                downloaded = client.download_artifact(manifest.flow.id, Path(directory) / "cpi-flow.zip", args.version)
+                expected_hash = _bundle_digest(bundle)
+                actual_hash = _bundle_digest(downloaded)
+            if expected_hash != actual_hash:
+                raise CPIClientError(
+                    f"Uploaded artifact checksum mismatch for {manifest.flow.id} "
+                    f"version {args.version}: expected {expected_hash}, got {actual_hash}"
+                )
+            return {"status": "verified", "artifactId": manifest.flow.id, "version": args.version, "sha256": actual_hash}
         if args.flow_command == "deploy":
             if not args.apply:
                 return {"dryRun": True, "operation": "deploy-flow", "artifactId": manifest.flow.id, "version": manifest.flow.version}

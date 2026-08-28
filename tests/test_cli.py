@@ -27,3 +27,10 @@ def test_status_is_health_alias():
 def test_login_requests_oauth_token():
     args = Namespace(command="login")
     assert _run(args, Client())["status"] == "authenticated"
+
+
+def test_flow_version_accepts_release_version_override():
+    args = _build_parser().parse_args(
+        ["flow", "version", "--manifest", "config/SAP_SMOKE_TEST.yaml", "--version", "1.0.1"]
+    )
+    assert args.version == "1.0.1"

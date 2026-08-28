@@ -40,13 +40,32 @@ cpi.exe --key-file .\CPI-API-KEY.json flow status --id SAP_SMOKE_TEST_FLOW
 
 Use `flow upload` instead of `flow update` when the artifact ID does not yet exist in the package. `flow update` uses SAP’s active-artifact PUT operation and replaces the existing draft content.
 
-## GitHub Actions
+## GitHub Actions SDLC lifecycle
 
-The workflow at `.github/workflows/deploy-sap-cpi.yml` runs on demand or when the flow source/configuration changes. Pushes default to `update` for the existing artifact. Manual runs offer three operations:
+The GitHub Actions release is staged and stops at the first failed gate:
+
+`Validate → Build → Upload/Update → Verify Upload → Save Version → Verify Version → Approval → Deploy → Verify Runtime → Monitor`
+
+The deploy job uses the protected `cpi-production` GitHub Environment. Configure
+required reviewers for that environment in repository settings before using it
+for a shared tenant.
+
+Manual releases require a new semantic version such as `1.0.1`. Upload
+verification downloads the artifact from CPI and compares its SHA-256 checksum
+with the bundle built by GitHub. Version verification repeats the check for the
+saved CPI version.
+
+The reusable implementation is `.github/workflows/sap-cpi-sdlc.yml`; the flow
+workflows provide the manifest, source directory, artifact ID, operation, and
+version.
+
+## GitHub Actions (workflow entry points)
+
+The workflows are manually triggered release entry points. Manual runs require an operation and a new version. The timer/Groovy demo has its own manual entry point. Pull requests and pushes run validation only; they do not mutate the CPI tenant.
 
 - `update`: replace the existing draft, save a version, and deploy. The CPI editor lock must be released.
 - `upload`: create a new artifact ID, save a version, and deploy.
-- `deploy-only`: deploy the existing active version without changing its draft. Use this when the artifact is locked or when no local content change is intended.
+- The staged release path versions and verifies content before approval. Redeploying an already saved version remains a separate operational action and should not bypass release approval.
 
 Create a GitHub Actions secret named `CPI_SERVICE_KEY_JSON` containing the complete API-client service-key JSON. Never commit the key, print it, or put it in logs. The workflow writes it only to a temporary runner file and removes that file at the end.
 

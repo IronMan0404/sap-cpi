@@ -23,6 +23,7 @@ build/
 .chrome-cdp-profile/
 Screenshot *.png
 .pytest-temp*/
+.tmp-inspect/
 
 # IDE and OS files
 .idea/

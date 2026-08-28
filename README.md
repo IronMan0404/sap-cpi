@@ -131,6 +131,13 @@ cpi.exe --key-file .\CPI-API-KEY.json list messages --top 20
 
 Do not run `package create` for this path. It is only for creating a new package from `config/SAP_SMOKE_TEST_CREATE_PACKAGE.yaml` and `artifacts/SAP_SMOKE_TEST_PACKAGE.zip`. Payload logging is suitable only for this smoke test; do not use it in production.
 
+GitHub Actions uses explicit SDLC stages: `Validate`, `Build`, `Upload/Update`,
+`Verify Upload`, `Save Version`, `Verify Version`, approval in the protected
+`cpi-production` Environment, `Deploy`, `Verify Runtime`, and `Monitor`. Start
+a release from the flow workflow's **Run workflow** action and provide a new
+semantic version such as `1.0.1`. The workflow builds the ZIP from
+`flows/<FLOW_ID>` and keeps the service key only in GitHub Actions Secrets.
+
 ## Development
 
 ```powershell

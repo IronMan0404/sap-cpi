@@ -1,74 +1,28 @@
 name: Deploy SAP Cloud Integration flow
-run-name: Deploy SAP Cloud Integration flow - ${{ inputs.operation || 'update' }}
+run-name: Deploy SAP Cloud Integration flow - ${{ inputs.operation || 'update' }}-${{ inputs.version || '1.0.1' }}
 
 on:
   workflow_dispatch:
     inputs:
       operation:
-        description: "How should CPI handle the flow?"
+        description: "Upload a new artifact or update an existing artifact"
         required: true
         default: update
         type: choice
-        options:
-          - update
-          - upload
-          - deploy-only
-  push:
-    paths:
-      - "config/SAP_SMOKE_TEST.yaml"
-      - "flows/SAP_SMOKE_TEST_FLOW/**"
-      - "artifacts/SAP_SMOKE_TEST_FLOW.zip"
-
-permissions:
-  contents: read
-
+        options: [update, upload]
+      version:
+        description: "New CPI semantic version"
+        required: true
+        default: 1.0.1
+        type: string
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    env:
-      CPI_SERVICE_KEY_JSON: ${{ secrets.CPI_SERVICE_KEY_JSON }}
-      CPI_DEPLOY_OPERATION: ${{ inputs.operation || 'update' }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install CLI
-        run: python -m pip install .
-
-      - name: Write temporary service key
-        run: |
-          python -c "import os; from pathlib import Path; Path('CPI-API-KEY.json').write_text(os.environ['CPI_SERVICE_KEY_JSON'], encoding='utf-8')"
-
-      - name: Validate OAuth and API access
-        run: cpi --key-file CPI-API-KEY.json login
-
-      - name: Build flow bundle
-        run: cpi --key-file CPI-API-KEY.json flow build --manifest config/SAP_SMOKE_TEST.yaml --output build/SAP_SMOKE_TEST_FLOW.zip
-
-      - name: Update existing flow draft
-        if: env.CPI_DEPLOY_OPERATION == 'update'
-        run: cpi --key-file CPI-API-KEY.json flow update --manifest config/SAP_SMOKE_TEST.yaml --bundle build/SAP_SMOKE_TEST_FLOW.zip --apply
-
-      - name: Create new flow artifact
-        if: env.CPI_DEPLOY_OPERATION == 'upload'
-        run: cpi --key-file CPI-API-KEY.json flow upload --manifest config/SAP_SMOKE_TEST.yaml --bundle build/SAP_SMOKE_TEST_FLOW.zip --apply
-
-      - name: Save version
-        if: env.CPI_DEPLOY_OPERATION != 'deploy-only'
-        run: cpi --key-file CPI-API-KEY.json flow version --manifest config/SAP_SMOKE_TEST.yaml --apply
-
-      - name: Deploy flow
-        run: cpi --key-file CPI-API-KEY.json flow deploy --manifest config/SAP_SMOKE_TEST.yaml --apply
-
-      - name: Verify runtime status
-        run: cpi --key-file CPI-API-KEY.json flow status --id SAP_SMOKE_TEST_FLOW
-
-      - name: Remove temporary service key
-        if: always()
-        run: Remove-Item -LiteralPath CPI-API-KEY.json -Force -ErrorAction SilentlyContinue
-        shell: pwsh
+  sdlc:
+    uses: ./.github/workflows/sap-cpi-sdlc.yml
+    with:
+      manifest: config/SAP_SMOKE_TEST.yaml
+      source: flows/SAP_SMOKE_TEST_FLOW
+      bundle: SAP_SMOKE_TEST_FLOW.zip
+      artifact_id: SAP_SMOKE_TEST_FLOW
+      operation: ${{ inputs.operation || 'update' }}
+      version: ${{ inputs.version || '1.0.1' }}
+    secrets: inherit
