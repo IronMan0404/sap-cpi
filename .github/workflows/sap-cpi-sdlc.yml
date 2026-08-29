@@ -15,6 +15,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: sap-cpi-${{ inputs.artifact_id }}
+  cancel-in-progress: false
+
 jobs:
   validate:
     name: Validate source
@@ -181,7 +185,11 @@ jobs:
         env:
           CPI_SERVICE_KEY_JSON: "${{ secrets.CPI_SERVICE_KEY_JSON }}"
         run: python -c "import os; from pathlib import Path; Path('CPI-API-KEY.json').write_text(os.environ['CPI_SERVICE_KEY_JSON'], encoding='utf-8')"
-      - run: cpi --key-file CPI-API-KEY.json flow status --id "${{ inputs.artifact_id }}"
-      - run: cpi --key-file CPI-API-KEY.json list messages --top 5
+      - name: Verify runtime is started
+        run: cpi --key-file CPI-API-KEY.json flow status --id "${{ inputs.artifact_id }}" | tee runtime-status.json
+      - name: Fail if CPI runtime is not started
+        run: python -c "import json; p=json.load(open('runtime-status.json')); assert any(v == 'STARTED' for v in (p.get('Status'), p.get('d', {}).get('Status'))), p"
+      - name: Verify recent processing logs are available
+        run: cpi --key-file CPI-API-KEY.json list messages --top 5
       - if: always()
         run: rm -f CPI-API-KEY.json

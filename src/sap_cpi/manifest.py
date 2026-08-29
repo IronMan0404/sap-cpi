@@ -43,6 +43,7 @@ class FlowSpec:
 class DeploymentSpec:
     poll_seconds: float = 5.0
     timeout_seconds: float = 300.0
+    max_attempts: int = 2
 
 
 @dataclass(frozen=True)
@@ -88,13 +89,14 @@ def load_manifest(path: str | Path) -> DeliveryManifest:
     try:
         poll = float(deployment.get("poll_seconds", 5))
         timeout = float(deployment.get("timeout_seconds", 300))
+        attempts = int(deployment.get("max_attempts", 2))
     except (TypeError, ValueError) as exc:
         raise ConfigurationError("Deployment polling values must be numbers") from exc
-    if poll <= 0 or timeout <= 0:
+    if poll <= 0 or timeout <= 0 or attempts < 1:
         raise ConfigurationError("Deployment polling values must be greater than zero")
     return DeliveryManifest(
         package_spec,
         FlowSpec(_text(flow.get("id"), "flow.id"), _text(flow.get("name"), "flow.name"), _text(flow.get("version"), "flow.version"), (source.parent / _text(flow.get("template"), "flow.template")).resolve(), configuration),
-        DeploymentSpec(poll, timeout),
+        DeploymentSpec(poll, timeout, attempts),
         source,
     )

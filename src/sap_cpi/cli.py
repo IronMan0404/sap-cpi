@@ -113,6 +113,37 @@ def _build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def _deployment_state(payload: Any) -> str | None:
+    """Return CPI's deployment state without relying on message text."""
+    if isinstance(payload, dict):
+        for key, value in payload.items():
+            if key.lower() == "status" and isinstance(value, str):
+                return value.strip().upper()
+        for value in payload.values():
+            state = _deployment_state(value)
+            if state:
+                return state
+    elif isinstance(payload, list):
+        for value in payload:
+            state = _deployment_state(value)
+            if state:
+                return state
+    return None
+
+
+def _wait_for_runtime(client: CPIClient, artifact_id: str, deadline: float, poll_seconds: float) -> Any:
+    runtime = None
+    while time.monotonic() < deadline:
+        runtime = client.runtime_status(artifact_id)
+        if _deployment_state(runtime) == "STARTED":
+            return runtime
+        time.sleep(poll_seconds)
+    raise CPIClientError(
+        f"CPI runtime for {artifact_id} did not reach STARTED before timeout: "
+        f"{json.dumps(runtime)}"
+    )
+
+
 def _run(args: argparse.Namespace, client: CPIClient) -> Any:
     if args.command == "login":
         client.authenticate()
@@ -204,26 +235,35 @@ def _run(args: argparse.Namespace, client: CPIClient) -> Any:
         if args.flow_command == "deploy":
             if not args.apply:
                 return {"dryRun": True, "operation": "deploy-flow", "artifactId": manifest.flow.id, "version": manifest.flow.version}
-            task = client.deploy_flow(manifest.flow.id, manifest.flow.version)
-            task_id = task.get("TaskId") if isinstance(task, dict) else None
-            if not task_id and isinstance(task, dict) and isinstance(task.get("d"), dict):
-                task_id = task["d"].get("TaskId")
-            if not task_id:
-                raise CPIClientError("Deployment response did not contain TaskId")
-            deadline = time.monotonic() + manifest.deployment.timeout_seconds
-            status = None
-            while time.monotonic() < deadline:
-                status = client.deployment_status(task_id)
-                text = json.dumps(status).lower()
-                if any(value in text for value in ("success", "failed", "fail", "error")):
-                    break
-                time.sleep(manifest.deployment.poll_seconds)
-            if "fail" in json.dumps(status).lower() or "error" in json.dumps(status).lower():
-                raise CPIClientError(
-                    f"CPI deployment failed for {manifest.flow.id} version "
-                    f"{manifest.flow.version}: {json.dumps(status)}"
-                )
-            return {"taskId": task_id, "deployment": status, "runtime": client.runtime_status(manifest.flow.id)}
+            last_error = None
+            for attempt in range(1, manifest.deployment.max_attempts + 1):
+                task = client.deploy_flow(manifest.flow.id, manifest.flow.version)
+                task_id = task.get("TaskId") if isinstance(task, dict) else None
+                if not task_id and isinstance(task, dict) and isinstance(task.get("d"), dict):
+                    task_id = task["d"].get("TaskId")
+                if not task_id:
+                    raise CPIClientError("Deployment response did not contain TaskId")
+                deadline = time.monotonic() + manifest.deployment.timeout_seconds
+                status = None
+                while time.monotonic() < deadline:
+                    status = client.deployment_status(task_id)
+                    state = _deployment_state(status)
+                    if state in {"SUCCESS", "SUCCEEDED", "COMPLETED"}:
+                        runtime = _wait_for_runtime(client, manifest.flow.id, deadline, manifest.deployment.poll_seconds)
+                        return {"taskId": task_id, "attempt": attempt, "deployment": status, "runtime": runtime}
+                    if state in {"FAIL", "FAILED", "ERROR"}:
+                        last_error = status
+                        break
+                    time.sleep(manifest.deployment.poll_seconds)
+                else:
+                    last_error = {"timeout": True, "lastStatus": status}
+                if attempt < manifest.deployment.max_attempts:
+                    time.sleep(manifest.deployment.poll_seconds)
+            raise CPIClientError(
+                f"CPI deployment failed for {manifest.flow.id} version "
+                f"{manifest.flow.version} after {manifest.deployment.max_attempts} attempt(s): "
+                f"{json.dumps(last_error)}"
+            )
     if args.command == "download":
         output = args.output or f"{args.artifact_id}-{args.version}.zip"
         path = client.download_artifact(args.artifact_id, output, args.version)

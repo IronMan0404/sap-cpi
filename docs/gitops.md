@@ -90,5 +90,7 @@ The service key must belong to a Process Integration Runtime `api` service insta
 - The CLI does not automatically delete or undeploy artifacts.
 - Externalized parameters, credentials, certificates, keystores, and other tenant configuration may need separate deployment/configuration.
 - Deployment is asynchronous. A successful API response means a task was accepted; the workflow waits for a terminal build/deploy status.
+- Deployment retries are controlled by `deployment.max_attempts` (default `2`) and are only used after CPI reports a failed or timed-out task. A failure remains fatal after the configured attempts.
+- Workflow runs are serialized per artifact ID so parallel updates cannot create CPI editor-lock conflicts. After deployment, the workflow requires the runtime artifact to report `STARTED`.
 - Payload logging is for smoke testing only and should not be used in production.
 - GitHub Actions deployment is intentionally gated by repository permissions and the configured secret; review changes before merging.
