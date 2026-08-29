@@ -197,9 +197,14 @@ def _run(args: argparse.Namespace, client: CPIClient) -> Any:
             while time.monotonic() < deadline:
                 status = client.deployment_status(task_id)
                 text = json.dumps(status).lower()
-                if "success" in text or "failed" in text or "error" in text:
+                if any(value in text for value in ("success", "failed", "fail", "error")):
                     break
                 time.sleep(manifest.deployment.poll_seconds)
+            if "fail" in json.dumps(status).lower() or "error" in json.dumps(status).lower():
+                raise CPIClientError(
+                    f"CPI deployment failed for {manifest.flow.id} version "
+                    f"{manifest.flow.version}: {json.dumps(status)}"
+                )
             return {"taskId": task_id, "deployment": status, "runtime": client.runtime_status(manifest.flow.id)}
     if args.command == "download":
         output = args.output or f"{args.artifact_id}-{args.version}.zip"
