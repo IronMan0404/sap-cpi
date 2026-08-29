@@ -68,6 +68,12 @@ class CPIClient:
         suffix = "?Overwrite=true" if overwrite else ""
         return self._json_request("POST", f"IntegrationPackages{suffix}", payload)
 
+    def update_package_metadata(self, package_id: str, metadata: dict[str, str]) -> Any:
+        if not package_id.strip():
+            raise CPIClientError("Package ID is required")
+        payload = {key: value for key, value in metadata.items() if value != ""}
+        return self._json_request("PUT", f"IntegrationPackages('{package_id}')", payload)
+
     def upload_flow(self, package_id: str, artifact_id: str, name: str, version: str, bundle: str | Path) -> Any:
         payload = self._bundle_payload(bundle, "ArtifactContent")
         # CPI assigns the draft version during create; sending Version causes HTTP 400.

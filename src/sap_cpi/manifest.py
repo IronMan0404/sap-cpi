@@ -21,6 +21,13 @@ class PackageSpec:
     name: str
     version: str
     template: Path | None
+    description: str = ""
+    short_text: str = ""
+    vendor: str = ""
+    keywords: str = ""
+    countries: str = ""
+    industries: str = ""
+    line_of_business: str = ""
 
 
 @dataclass(frozen=True)
@@ -67,6 +74,13 @@ def load_manifest(path: str | Path) -> DeliveryManifest:
         _text(package.get("name"), "package.name"),
         _text(package.get("version"), "package.version"),
         (source.parent / template).resolve() if template else None,
+        str(package.get("description", "")).strip(),
+        str(package.get("short_text", "")).strip(),
+        str(package.get("vendor", "")).strip(),
+        str(package.get("keywords", "")).strip(),
+        str(package.get("countries", "")).strip(),
+        str(package.get("industries", "")).strip(),
+        str(package.get("line_of_business", "")).strip(),
     )
     configuration = flow.get("configuration", {})
     if not isinstance(configuration, dict):

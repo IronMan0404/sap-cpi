@@ -69,6 +69,9 @@ def _build_parser() -> argparse.ArgumentParser:
     package_create = package_commands.add_parser("create")
     package_create.add_argument("--manifest", required=True)
     package_create.add_argument("--apply", action="store_true")
+    package_update = package_commands.add_parser("update")
+    package_update.add_argument("--manifest", required=True)
+    package_update.add_argument("--apply", action="store_true")
     package_download = package_commands.add_parser("download")
     package_download.add_argument("--id", required=True)
     package_download.add_argument("--output", required=True)
@@ -128,6 +131,21 @@ def _run(args: argparse.Namespace, client: CPIClient) -> Any:
         if args.package_command == "download":
             path = client.download_package(args.id, args.output)
             return {"status": "downloaded", "file": str(path)}
+        if args.package_command == "update":
+            manifest = load_manifest(args.manifest)
+            metadata = {
+                "Name": manifest.package.name,
+                "Description": manifest.package.description,
+                "ShortText": manifest.package.short_text,
+                "Vendor": manifest.package.vendor,
+                "Keywords": manifest.package.keywords,
+                "Countries": manifest.package.countries,
+                "Industries": manifest.package.industries,
+                "LineOfBusiness": manifest.package.line_of_business,
+            }
+            if not args.apply:
+                return {"dryRun": True, "operation": "update-package", "packageId": manifest.package.id, "metadata": metadata}
+            return client.update_package_metadata(manifest.package.id, metadata)
         manifest = load_manifest(args.manifest)
         if manifest.package.template is None:
             raise ConfigurationError("Manifest field 'package.template' is required for package create")

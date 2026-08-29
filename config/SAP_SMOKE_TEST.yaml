@@ -3,6 +3,13 @@ package:
   id: poc
   name: SAP Smoke Test
   version: 1.0.0
+  short_text: SAP Cloud Integration smoke test
+  description: <p>Smoke-test package demonstrating a Timer Start Event, Content Modifier, Groovy Script, deployment, and message monitoring in SAP Cloud Integration.</p>
+  vendor: SAP CPI POC
+  keywords: SAP Cloud Integration, Smoke Test, Timer, Groovy, Integration Suite
+  countries: Global
+  industries: Technology
+  line_of_business: Integration
 
 flow:
   id: SAP_SMOKE_TEST_FLOW

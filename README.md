@@ -140,6 +140,16 @@ a release from the flow workflow's **Run workflow** action and provide a new
 semantic version such as `1.0.1`. The workflow builds the ZIP from
 `flows/<FLOW_ID>` and keeps the service key only in GitHub Actions Secrets.
 
+Package metadata is defined in the flow manifest and can be applied to the
+existing package with:
+
+```powershell
+cpi.exe --key-file .\CPI-API-KEY.json package update --manifest .\config\SAP_TIMER_GROOVY_DEMO.yaml --apply
+```
+
+Release the CPI package editor lock before running this command. Tenant custom
+tags must be defined by a CPI administrator first.
+
 ## Development
 
 ```powershell

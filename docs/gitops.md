@@ -42,6 +42,12 @@ Use `flow upload` instead of `flow update` when the artifact ID does not yet exi
 
 ## GitHub Actions SDLC lifecycle
 
+Package overview metadata is also managed as code. Run `package update` with a
+manifest to apply the description, short text, vendor, keywords, country,
+industry, and line-of-business fields. This operation requires the package to
+be editable and unlocked. Custom Tags are tenant-defined and require existing
+tag definitions in CPI.
+
 The GitHub Actions release is staged and stops at the first failed gate:
 
 `Validate → Build → Upload/Update → Verify Upload → Save Version → Verify Version → Approval → Deploy → Verify Runtime → Monitor`

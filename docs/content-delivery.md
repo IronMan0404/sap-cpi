@@ -38,6 +38,20 @@ cpi.exe --key-file .\CPI-API-KEY.json package download --id poc --output .\artif
 
 For an editable existing package, set `package.id: poc` in the manifest and run `flow upload` directly. A package template is not required for flow upload. Use a unique `flow.id`, or use the existing artifact ID only when intentionally updating it.
 
+### Update package overview metadata
+
+Package descriptions and standard catalog fields are maintained in the
+manifest. Apply them to an existing editable package with:
+
+```powershell
+cpi.exe --key-file .\CPI-API-KEY.json package update --manifest .\config\SAP_TIMER_GROOVY_DEMO.yaml --apply
+```
+
+The package must not be locked in the CPI editor. The command updates the
+package name, description, short text, vendor, keywords, country, industry,
+and line of business. Custom Tags are tenant-defined attributes and require
+definitions in CPI Settings before their values can be maintained.
+
 To create a new package such as `SAP_SMOKE_TEST`, use a separate manifest (or add the package `template` field temporarily) with a real exported package ZIP such as `artifacts/SAP_SMOKE_TEST_PACKAGE.zip`. A flow artifact ZIP cannot be used as a package ZIP. Run `package create --apply` before uploading the flow.
 
 The existing `DEMO-API-KEY.json` belongs to the `integration-flow` plan and is for deployed flow calls, not package or design-time artifact management.

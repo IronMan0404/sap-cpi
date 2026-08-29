@@ -3,6 +3,13 @@ package:
   id: poc
   name: POC
   version: 1.0.0
+  short_text: SAP CPI GitHub SDLC demonstration
+  description: <p>Source-controlled SAP Cloud Integration demonstration package for GitHub SDLC delivery, including validation, artifact upload or update, version verification, approval, deployment, and runtime monitoring.</p>
+  vendor: SAP CPI POC
+  keywords: SAP Cloud Integration, GitHub, GitOps, CI/CD, Groovy, Timer, Integration Suite
+  countries: Global
+  industries: Technology
+  line_of_business: Integration
 
 flow:
   id: SAP_TIMER_GROOVY_DEMO
