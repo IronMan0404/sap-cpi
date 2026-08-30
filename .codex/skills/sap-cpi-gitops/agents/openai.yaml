@@ -1,0 +1,4 @@
+interface:
+  display_name: "SAP CPI GitOps"
+  short_description: "Manage SAP CPI GitOps flows"
+  default_prompt: "Use $sap-cpi-gitops to inspect and safely update this repository's SAP CPI flow delivery."

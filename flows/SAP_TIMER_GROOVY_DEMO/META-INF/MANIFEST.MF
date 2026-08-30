@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: SAP Timer Groovy Demo
 Bundle-SymbolicName: SAP_TIMER_GROOVY_DEMO; singleton:=true
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.2
 SAP-BundleType: IntegrationFlow
 SAP-NodeType: IFLMAP
 SAP-RuntimeProfile: iflmap
