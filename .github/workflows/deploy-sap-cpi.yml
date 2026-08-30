@@ -20,7 +20,7 @@ jobs:
     uses: ./.github/workflows/sap-cpi-sdlc.yml
     with:
       manifest: config/SAP_SMOKE_TEST.yaml
-      source: flows/SAP_SMOKE_TEST_FLOW
+      source: SAP_SMOKE_TEST_FLOW
       bundle: SAP_SMOKE_TEST_FLOW.zip
       artifact_id: SAP_SMOKE_TEST_FLOW
       operation: ${{ inputs.operation || 'update' }}

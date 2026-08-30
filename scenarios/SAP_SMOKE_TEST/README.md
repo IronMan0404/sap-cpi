@@ -12,7 +12,7 @@ Timer Start Event
     -> Groovy Script: write payload to the message-processing log
 ```
 
-The flow design is documented in [flows/SAP_SMOKE_TEST_FLOW/README.md](../../flows/SAP_SMOKE_TEST_FLOW/README.md).
+The flow design is documented in [SAP_SMOKE_TEST_FLOW/README.md](../../SAP_SMOKE_TEST_FLOW/README.md).
 
 ## Scenario 1: build the flow artifact
 

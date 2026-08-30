@@ -12,7 +12,7 @@ authentication, package/artifact lifecycle, runtime verification, and security.
 
 ## 2. Repository source of truth
 
-The canonical source for a flow is `flows/<FLOW_ID>/`. The corresponding
+The canonical source for a flow is the repository-root directory `<FLOW_ID>/`. The corresponding
 manifest is `config/<FLOW_ID>.yaml`. The SAP-exported `.iflw` model and resource
 files are authoritative for the graphical design and runtime behavior.
 
@@ -20,7 +20,7 @@ Current canonical flow:
 
 | Flow | Package | Source | Manifest |
 | --- | --- | --- | --- |
-| `SAP_TIMER_GROOVY_DEMO` | `poc` | `flows/SAP_TIMER_GROOVY_DEMO` | `config/SAP_TIMER_GROOVY_DEMO.yaml` |
+| `SAP_TIMER_GROOVY_DEMO` | `poc` | `SAP_TIMER_GROOVY_DEMO` | `config/SAP_TIMER_GROOVY_DEMO.yaml` |
 
 The Timer/Groovy flow contains a Timer Start Event, Content Modifier, Groovy
 script, and end path. Its deployed CPI version is tracked in the manifest and
@@ -167,7 +167,7 @@ API-client service key and normally ends at `/api/v1`.
 A repository change is acceptable when:
 
 1. The canonical source and manifest identify the same SAP flow ID and name.
-2. The bundle builds from `flows/<FLOW_ID>` without requiring a package ZIP.
+2. The bundle builds from the repository-root `<FLOW_ID>` directory without requiring a package ZIP.
 3. All tests pass and all manifests/workflows parse successfully.
 4. Existing artifacts use update; new IDs use upload.
 5. Upload/version verification completes before deployment.
