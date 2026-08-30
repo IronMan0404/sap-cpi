@@ -32,7 +32,7 @@ Use `upload` for the first deployment and `deploy-only` for a repeat deployment.
 ## Local equivalent
 
 ```powershell
-python scripts/build_iflow.py flows/SAP_TIMER_GROOVY_DEMO build/SAP_TIMER_GROOVY_DEMO.zip
+python scripts/build_iflow.py SAP_TIMER_GROOVY_DEMO build/SAP_TIMER_GROOVY_DEMO.zip
 cpi --key-file CPI-API-KEY.json login
 cpi --key-file CPI-API-KEY.json flow upload --manifest config/SAP_TIMER_GROOVY_DEMO.yaml --bundle build/SAP_TIMER_GROOVY_DEMO.zip --apply
 cpi --key-file CPI-API-KEY.json flow version --manifest config/SAP_TIMER_GROOVY_DEMO.yaml --apply

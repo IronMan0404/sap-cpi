@@ -15,13 +15,13 @@ The YAML manifest stores deployment metadata such as package ID, flow ID, versio
 
 ## Source of truth
 
-The actual flow design is the SAP-exported integration project archive. For the smoke test, it must contain:
+The actual flow design is the SAP-exported integration project archive at the repository root. For the smoke test, it must contain:
 
 ```text
 Timer Start Event → Content Modifier (Hello World!) → Groovy Script (log payload)
 ```
 
-Create or model this flow in SAP Cloud Integration, or use SAP’s GitHub integration to import/pull it. Export/sync the resulting archive to `artifacts/SAP_SMOKE_TEST_FLOW.zip`. Store Groovy scripts and other resources in the exported project as provided by SAP.
+Create or model this flow in SAP Cloud Integration, or use SAP’s GitHub integration to import/pull it. Store the exported project under the repository-root directory `SAP_SMOKE_TEST_FLOW/`; use `artifacts/SAP_SMOKE_TEST_FLOW.zip` only when a manifest explicitly requires an archive input. Store Groovy scripts and other resources in the exported project as provided by SAP.
 
 VS Code and Cursor are useful for reviewing the archive, editing Groovy/resources, changing manifests, and reviewing pull requests. They are not SAP’s graphical iFlow editor and cannot reliably generate the complete SAP bundle from YAML or JSON.
 

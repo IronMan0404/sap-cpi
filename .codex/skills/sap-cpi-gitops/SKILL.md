@@ -9,7 +9,7 @@ Use this skill for requests involving the SAP CPI flows, `cpi` CLI, manifests, G
 
 ## Repository contract
 
-- Treat `flows/<FLOW_ID>/` as the canonical editable source for an iFlow.
+- Treat the repository-root `<FLOW_ID>/` directory as the canonical editable source for an iFlow.
 - Treat `config/<FLOW_ID>.yaml` as deployment metadata: package ID, artifact ID, name, version, source/template paths, and polling settings.
 - Treat SAP-exported `.iflw` XML and bundle metadata as authoritative. Do not invent graphical iFlow designs from YAML or JSON.
 - Preserve SAP IDs and symbolic names exactly. Use uppercase SAP-style directory, file, package, and artifact names unless an existing SAP export requires otherwise.
@@ -19,7 +19,7 @@ Use this skill for requests involving the SAP CPI flows, `cpi` CLI, manifests, G
 ## Required workflow
 
 1. Inspect the relevant manifest, canonical flow directory, workflow, tests, and current Git status.
-2. For imported CPI content, compare the SAP export with `flows/<FLOW_ID>` before editing. Migrate meaningful design/resources, not CPI-generated timestamps or line-ending-only changes.
+2. For imported CPI content, compare the SAP export with the repository-root `<FLOW_ID>` directory before editing. Migrate meaningful design/resources, not CPI-generated timestamps or line-ending-only changes.
 3. Validate IDs, names, package references, version consistency, bundle symbolic name, and required source files.
 4. Build with `scripts/build_iflow.py` and run the test suite before delivery.
 5. Use `flow update` for an existing artifact and `flow upload` only for a new artifact ID. Save a new semantic version before deployment.

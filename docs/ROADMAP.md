@@ -15,7 +15,7 @@ The repository currently provides:
 - A GitHub Actions deployment workflow with `update`, `upload`, and `deploy-only` modes.
 - Tests and documentation for the four smoke-test execution scenarios.
 
-The repository does not generate SAP iFlow designs from YAML or JSON. The SAP-exported integration project/archive is the source of the actual flow model.
+The repository does not generate SAP iFlow designs from YAML or JSON. The SAP-exported integration project/archive at the repository root is the source of the actual flow model.
 
 ## Phase 1: establish the source of truth
 

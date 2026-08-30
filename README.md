@@ -68,7 +68,7 @@ The existing `PIR-DEV` instance uses the `integration-flow` plan. It is intended
 
 The OData service root is `<service-key-url>/api/v1`. A successful `login` only validates OAuth; it does not prove that the credential can access OData resources. If `health` or `list content` returns HTTP 404, use the URL from the API-client service key and verify its Cloud Integration API roles. `CPI_API_PATH` is available for tenants that expose a different API path.
 
-See [scenarios/SAP_SMOKE_TEST/README.md](scenarios/SAP_SMOKE_TEST/README.md) for the four scenario steps, [flows/SAP_SMOKE_TEST_FLOW/README.md](flows/SAP_SMOKE_TEST_FLOW/README.md) for the flow design, [docs/gitops.md](docs/gitops.md) for local/GitHub deployment, `docs/cloud-foundry-setup.md` for setup, `docs/content-delivery.md` for package/flow delivery, and `docs/authentication.md` for CPI authentication.
+See [scenarios/SAP_SMOKE_TEST/README.md](scenarios/SAP_SMOKE_TEST/README.md) for the four scenario steps, [SAP_SMOKE_TEST_FLOW/README.md](SAP_SMOKE_TEST_FLOW/README.md) for the flow design, [docs/gitops.md](docs/gitops.md) for local/GitHub deployment, `docs/cloud-foundry-setup.md` for setup, `docs/content-delivery.md` for package/flow delivery, and `docs/authentication.md` for CPI authentication.
 
 See [docs/ROADMAP.md](docs/ROADMAP.md) for the SAP-supported Git/GitHub integration roadmap, promotion options, and limitations.
 
@@ -140,7 +140,7 @@ GitHub Actions uses explicit SDLC stages: `Validate`, `Build`, `Upload/Update`,
 `cpi-production` Environment, `Deploy`, `Verify Runtime`, and `Monitor`. Start
 a release from the flow workflow's **Run workflow** action and provide a new
 semantic version such as `1.0.1`. The workflow builds the ZIP from
-`flows/<FLOW_ID>` and keeps the service key only in GitHub Actions Secrets.
+`<FLOW_ID>` and keeps the service key only in GitHub Actions Secrets.
 
 Package metadata is defined in the flow manifest and can be applied to the
 existing package with:

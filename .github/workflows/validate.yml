@@ -35,4 +35,4 @@ jobs:
       - name: Build checked-in iFlow sources
         run: |
           python scripts/build_iflow.py flows/SAP_SMOKE_TEST_FLOW build/validate-smoke.zip
-          python scripts/build_iflow.py flows/SAP_TIMER_GROOVY_DEMO build/validate-demo.zip
+          python scripts/build_iflow.py SAP_TIMER_GROOVY_DEMO build/validate-demo.zip

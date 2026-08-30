@@ -13,7 +13,7 @@ on:
       version:
         description: "New CPI semantic version"
         required: true
-        default: 1.0.3
+        default: 1.0.4
         type: string
 
 jobs:
@@ -21,7 +21,7 @@ jobs:
     uses: ./.github/workflows/sap-cpi-sdlc.yml
     with:
       manifest: config/SAP_TIMER_GROOVY_DEMO.yaml
-      source: flows/SAP_TIMER_GROOVY_DEMO
+      source: SAP_TIMER_GROOVY_DEMO
       bundle: SAP_TIMER_GROOVY_DEMO.zip
       artifact_id: SAP_TIMER_GROOVY_DEMO
       operation: ${{ inputs.operation }}
