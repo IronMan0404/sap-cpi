@@ -4,6 +4,8 @@ Python proof of concept for connecting to SAP Cloud Integration on SAP BTP, vali
 
 Architecture and trust boundaries: [docs/architecture.md](docs/architecture.md)
 
+Shareable local setup guide: [docs/local-setup.md](docs/local-setup.md)
+
 Normative repository contract: [docs/specs/SAP_CPI_GITOPS_SPEC.md](docs/specs/SAP_CPI_GITOPS_SPEC.md). The repo-local agent guidance is [.codex/skills/sap-cpi-gitops/SKILL.md](.codex/skills/sap-cpi-gitops/SKILL.md).
 
 ## Security
