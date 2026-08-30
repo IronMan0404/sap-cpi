@@ -4,6 +4,8 @@ Python proof of concept for connecting to SAP Cloud Integration on SAP BTP, vali
 
 Architecture and trust boundaries: [docs/architecture.md](docs/architecture.md)
 
+Normative repository contract: [docs/specs/SAP_CPI_GITOPS_SPEC.md](docs/specs/SAP_CPI_GITOPS_SPEC.md). The repo-local agent guidance is [.codex/skills/sap-cpi-gitops/SKILL.md](.codex/skills/sap-cpi-gitops/SKILL.md).
+
 ## Security
 
 The local `DEMO-API-KEY.json` file is intentionally ignored by Git. Never commit, paste, or log its `clientsecret`. If the key is exposed, revoke and recreate it in SAP BTP.

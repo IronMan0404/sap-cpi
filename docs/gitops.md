@@ -1,5 +1,7 @@
 # SAP Cloud Integration GitOps
 
+The normative repository contract is [SAP CPI GitOps Technical Specification](specs/SAP_CPI_GITOPS_SPEC.md). This guide provides the operational quick reference; update both when lifecycle behavior changes.
+
 ## What this repository manages
 
 This repository manages the delivery lifecycle of an SAP Cloud Integration artifact:

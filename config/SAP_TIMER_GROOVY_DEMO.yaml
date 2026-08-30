@@ -14,7 +14,7 @@ package:
 flow:
   id: SAP_TIMER_GROOVY_DEMO
   name: SAP Timer Groovy Demo
-  version: 1.0.0
+  version: 1.0.2
   template: ../build/SAP_TIMER_GROOVY_DEMO.zip
   configuration: {}
 
